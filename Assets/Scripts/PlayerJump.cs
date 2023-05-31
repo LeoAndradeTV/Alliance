@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[RequireComponent(typeof(PlayerInputReader))]
 /// <summary>
 /// Handles all of the player jump logic
 /// </summary>
 public class PlayerJump : MonoBehaviour
 {
-    private PlayerInputActions inputActions;
+    private PlayerInputReader _playerInput;
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Rigidbody playerRigidbody;
@@ -23,10 +23,20 @@ public class PlayerJump : MonoBehaviour
 
     private void Start()
     {
-        inputActions = new PlayerInputActions();
+        _playerInput = GetComponent<PlayerInputReader>();
+        _playerInput.OnPlayerJumped += playerInput_OnPlayerJumped;
+    }
 
-        inputActions.Player.Enable();
-        inputActions.Player.Jump.performed += Jump_performed;
+    /// <summary>
+    /// Listens to jump input
+    /// </summary>
+    /// <param name="obj"></param>
+    private void playerInput_OnPlayerJumped(object sender, System.EventArgs e)
+    {
+        if (IsGrounded())
+        {
+            playerRigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        }
     }
 
     private void Update()
@@ -45,18 +55,6 @@ public class PlayerJump : MonoBehaviour
         } else
         {
             playerRigidbody.velocity -= (new Vector3(playerRigidbody.velocity.x, downGravity, playerRigidbody.velocity.z)) * Time.deltaTime;
-        }
-    }
-
-    /// <summary>
-    /// Listens to jump input
-    /// </summary>
-    /// <param name="obj"></param>
-    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if (IsGrounded())
-        {
-            playerRigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
     }
 
