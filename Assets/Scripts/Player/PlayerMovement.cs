@@ -9,7 +9,10 @@ using UnityEngine.Rendering;
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private Transform cam;
+
     private PlayerInputReader _playerInput;
+    private float _rotationSpeed = 10f;
 
     // Start is called before the first frame update
     void Start()
@@ -29,8 +32,18 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void HandleMovement(Vector2 movement)
     {
-        Vector3 moveDir = new Vector3(movement.x, 0f, movement.y);
+        Vector3 camForward = cam.forward;
+        Vector3 camRight = cam.right;
+
+        camForward.y = 0;
+        camRight.y = 0;
+
+        Vector3 forwardRelative = movement.y * camForward;
+        Vector3 rightRelative = movement.x * camRight;
+
+        Vector3 moveDir = (forwardRelative + rightRelative).normalized;
 
         transform.position += moveDir * _playerInput.GetMovementSpeed() * Time.deltaTime;
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * _rotationSpeed);
     }
 }

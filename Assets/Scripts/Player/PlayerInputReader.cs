@@ -53,6 +53,12 @@ public class PlayerInputReader : MonoBehaviour
         return movement;
     }
 
+    public Vector2 GetCameraRotationFromController()
+    {
+        Vector2 cameraMovement = _inputActions.Player.Camera.ReadValue<Vector2>();
+        return cameraMovement;
+    }
+
     public float GetMovementSpeed()
     {
         return _speed;
