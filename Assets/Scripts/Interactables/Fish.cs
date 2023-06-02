@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
-public class Coconut : Food
+public class Fish : Food
 {
-
     private void OnEnable()
     {
-        energy = 5;
+        energy = 15;
     }
 
     public override void Use()
     {
         base.Use();
-        Debug.Log($"You ate the coconut and recovered {energy} energy!");
+        Debug.Log($"You ate the fish and recovered {energy} energy!");
     }
 }

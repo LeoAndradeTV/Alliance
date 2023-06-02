@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IUsable : IInteractable
+public interface IHoldable : IInteractable
 {
-   void Use();
+    void Hold();
 }
