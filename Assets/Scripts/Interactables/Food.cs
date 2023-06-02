@@ -3,35 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Food : MonoBehaviour, IUsable, IHoldable, IDropable
+public class Food : Item, IUsable
 {
     protected float energy;
-    private bool isHoldingItem => ItemManager.Instance.IsHoldingItem;
 
     public virtual void Use()
     {
         ItemManager.Instance.IsHoldingItem = false;
+        Destroy(gameObject); 
     }
 
-    public void Interact() 
+    public override void Hold() 
     {
-        if (isHoldingItem)
-        {
-            Drop();
-            return;
-        }
-        Hold();
-    }
-
-    public void Hold() 
-    {
+        base.Hold();
         Debug.Log("You are holding food");
-        ItemManager.Instance.IsHoldingItem = true;
     }
 
-    public void Drop() 
+    public override void Drop() 
     {
+        base.Drop();
         Debug.Log("You dropped food");
-        ItemManager.Instance.IsHoldingItem = false;
     }
 }

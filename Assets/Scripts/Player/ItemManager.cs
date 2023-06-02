@@ -6,6 +6,8 @@ public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance {  get; private set; }
 
+    [SerializeField] private Transform carryTransform;
+
     private PlayerInputReader _playerInput;
 
     private float maxInteractDistance = 1.5f;
@@ -58,6 +60,12 @@ public class ItemManager : MonoBehaviour
         if (!isHoldingItem)
         {
             foundObject = FindInteractableObject();
+        } else
+        {
+            if (foundObject != null)
+            {
+                foundObject.transform.position = carryTransform.position;
+            }
         }
     }
 
