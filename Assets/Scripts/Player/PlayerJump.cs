@@ -14,9 +14,9 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private Rigidbody playerRigidbody;
 
     // Jump variables
-    private float upGravity = 25;
-    private float downGravity = 35;
-    private float jumpForce = 1000f;
+    private float upGravity = 30;
+    private float downGravity = 40;
+    private float jumpForce = 15f;
 
     // Max distance for box to check if player is grounded
     private float boxCastMaxDistance = 0.15f;
@@ -35,7 +35,8 @@ public class PlayerJump : MonoBehaviour
     {
         if (IsGrounded())
         {
-            playerRigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            //playerRigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, jumpForce, playerRigidbody.velocity.z);
         }
     }
 
@@ -51,10 +52,10 @@ public class PlayerJump : MonoBehaviour
     {
         if (playerRigidbody.velocity.y > 0)
         {
-            playerRigidbody.velocity -= (new Vector3(playerRigidbody.velocity.x, upGravity, playerRigidbody.velocity.z)) * Time.deltaTime;
+            playerRigidbody.velocity -= (new Vector3(0, upGravity, 0)) * Time.deltaTime;
         } else
         {
-            playerRigidbody.velocity -= (new Vector3(playerRigidbody.velocity.x, downGravity, playerRigidbody.velocity.z)) * Time.deltaTime;
+            playerRigidbody.velocity -= (new Vector3(0, downGravity, 0)) * Time.deltaTime;
         }
     }
 
@@ -64,7 +65,7 @@ public class PlayerJump : MonoBehaviour
     /// <returns>True if player is on the floor</returns>
     public bool IsGrounded()
     {
-        Vector3 boxCenter = new Vector3(playerRigidbody.transform.position.x, playerRigidbody.transform.position.y - 0.65f, playerRigidbody.transform.position.z);
+        Vector3 boxCenter = new Vector3(playerRigidbody.transform.position.x, playerRigidbody.transform.position.y + 0.3f, playerRigidbody.transform.position.z);
         Vector3 boxSize = new Vector3(playerRigidbody.transform.localScale.x, playerRigidbody.transform.localScale.y / 2, playerRigidbody.transform.localScale.z);
         return Physics.BoxCast(boxCenter, boxSize/2, Vector3.down, transform.rotation, boxCastMaxDistance, groundLayer);
     }
