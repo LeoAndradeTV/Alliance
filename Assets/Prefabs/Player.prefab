@@ -206,11 +206,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4349587818166236950}
   - component: {fileID: 4349587818166236952}
+  - component: {fileID: 1705825501}
   - component: {fileID: 4349587818166236955}
   - component: {fileID: 4349587818166236954}
   - component: {fileID: 4349587818166236957}
+  - component: {fileID: 4320907599042851247}
   - component: {fileID: 1705825500}
-  - component: {fileID: 1705825501}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -265,6 +266,19 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1705825501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4349587818166236951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7d8a2bdc1eb18c4b8c3113226cf576a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 0}
 --- !u!114 &4349587818166236955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,6 +320,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cinemachine: {fileID: 0}
+--- !u!114 &4320907599042851247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4349587818166236951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c5181aa6e11c5489a9f7b39de3c7c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &1705825500
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -322,16 +348,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &1705825501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4349587818166236951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7d8a2bdc1eb18c4b8c3113226cf576a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 0}

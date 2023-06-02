@@ -47,7 +47,6 @@ public class PlayerMovementPhysics : MonoBehaviour
 
         _playerRb.velocity = new Vector3(moveDir.x, _playerRb.velocity.y, moveDir.z);
 
-        //transform.position += moveDir * _playerInput.GetMovementSpeed() * Time.deltaTime;
         Vector3 finalRotation = new Vector3(_playerRb.velocity.x, 0, _playerRb.velocity.z);
 
         transform.forward = Vector3.Slerp(transform.forward, finalRotation, Time.deltaTime * _rotationSpeed);
