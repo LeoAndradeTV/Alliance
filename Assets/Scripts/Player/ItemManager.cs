@@ -60,8 +60,7 @@ public class ItemManager : MonoBehaviour
         if (!isHoldingItem)
         {
             foundObject = FindInteractableObject();
-        }
-        else
+        } else
         {
             if (foundObject != null)
             {
