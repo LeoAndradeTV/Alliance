@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEngine.EventSystems.EventTrigger;
 using static UnityEngine.Rendering.DebugUI;
 
@@ -68,7 +69,7 @@ public class GridManager : MonoBehaviour
     public void ResetGrid()
     {
         GameObject[] cubes = GameObject.FindGameObjectsWithTag("TestModule");
-        foreach(GameObject cube in cubes)
+        foreach (GameObject cube in cubes)
         {
             DestroyImmediate(cube);
         }
@@ -76,16 +77,16 @@ public class GridManager : MonoBehaviour
 
     private void RemoveSingleCubes(List<int>[,] grid, int width, int depth)
     {
-        for (int z = 0; z < depth; z+=moduleDepth)
+        for (int z = 0; z < depth; z += moduleDepth)
         {
-            for (int x = 0; x < width; x+=moduleWidth)
+            for (int x = 0; x < width; x += moduleWidth)
             {
                 MapLocation currentPosition = new MapLocation(x, z);
                 List<MapLocation> neighbors = GetNeighbors(currentPosition);
                 List<int> neighborValues = new List<int>();
                 foreach (MapLocation neighbor in neighbors)
                 {
-                    if(IsNeighborValid(neighbor, width, depth))
+                    if (IsNeighborValid(neighbor, width, depth))
                     {
                         neighborValues.Add(grid[neighbor.x, neighbor.z][0]);
                     }
@@ -121,9 +122,9 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator GenerateGridVisualCoroutine(List<int>[,] grid, int width, int depth)
     {
-        for (int x = 0; x < width; x+=moduleWidth)
+        for (int x = 0; x < width; x += moduleWidth)
         {
-            for (int z = 0; z < depth; z+=moduleDepth)
+            for (int z = 0; z < depth; z += moduleDepth)
             {
                 int id = grid[x, z][0];
                 Instantiate(possibleModules[id].prefab, new Vector3(x, 0, z), Quaternion.identity);
@@ -137,7 +138,7 @@ public class GridManager : MonoBehaviour
         List<int>[,] grid = new List<int>[width, depth];
         for (int z = 0; z < depth; z += moduleDepth)
         {
-            for (int x = 0; x < width; x+=moduleWidth)
+            for (int x = 0; x < width; x += moduleWidth)
             {
                 grid[x, z] = new List<int>(possibleIds);
             }
@@ -154,9 +155,9 @@ public class GridManager : MonoBehaviour
         MapLocation position = new MapLocation(0, 0);
 
         // Go through grid and find position with least entropy
-        for (int z = 0; z < depth; z+=moduleDepth)
+        for (int z = 0; z < depth; z += moduleDepth)
         {
-            for (int x = 0; x < width; x+=moduleWidth)
+            for (int x = 0; x < width; x += moduleWidth)
             {
                 List<int> currentEntry = grid[x, z];
                 if ((minEntropyList == null || (currentEntry.Count < minEntropyList.Count)) && (currentEntry.Count > 1))
@@ -169,7 +170,7 @@ public class GridManager : MonoBehaviour
         return position;
     }
 
-    private void WaveFunctionCollapse(List<int>[,] grid, int width, int depth) 
+    private void WaveFunctionCollapse(List<int>[,] grid, int width, int depth)
     {
         // Grab position with smallest entropy
         MapLocation positionToCollapse = GetMinEntropyPosition(grid, width, depth);
@@ -198,16 +199,14 @@ public class GridManager : MonoBehaviour
     {
         int value = GetRandomIndexFromList(currentCell);
 
+        // TODO: place conditions in bools
         List<MapLocation> neighbors = GetNeighbors(positionToCollapse);
         foreach (MapLocation neighbor in neighbors)
         {
-            if (IsNeighborValid(neighbor, width, depth) && grid[neighbor.x, neighbor.z].Count == 1)
+            if ((IsNeighborValid(neighbor, width, depth) && grid[neighbor.x, neighbor.z].Count == 1) && (!connections[grid[neighbor.x, neighbor.z][0]].Contains(value)))
             {
-                if (!connections[grid[neighbor.x, neighbor.z][0]].Contains(value))
-                {
-                    currentCell.Remove(value);
-                    value = GetRandomIndexFromList(currentCell);
-                }
+                currentCell.Remove(value);
+                value = GetRandomIndexFromList(currentCell);
             }
         }
 
@@ -219,7 +218,7 @@ public class GridManager : MonoBehaviour
         // Current possible values in the cell
         int[] possibleValues = grid[currentPosition.x, currentPosition.z].ToArray();
 
-        // If cell could have and of the possible ids, get out
+        // If cell could have all of the possible ids, get out
         if (possibleValues.Length == possibleIds.Count)
             return;
 
@@ -227,25 +226,23 @@ public class GridManager : MonoBehaviour
         List<MapLocation> neighbors = GetNeighbors(currentPosition);
 
         // Go to every neighbor
-        foreach(MapLocation neighbor in neighbors)
+        foreach (MapLocation neighbor in neighbors)
         {
             if (IsNeighborValid(neighbor, width, depth) && grid[neighbor.x, neighbor.z].Count > possibleValues.Length)
             {
-                List<int> possibleNeighborConnection = new List<int>();
-                foreach (int i in possibleValues)
-                {
-                    foreach (int j in connections[i])
-                    {
-                        if (grid[neighbor.x, neighbor.z].Contains(j) && !possibleNeighborConnection.Contains(j))
-                        {
-                            possibleNeighborConnection.Add(j);
-                        }
+                List<int> allKeysList = connections.Keys.ToList();
+
+                List<int> allPossibleNeighborConnections = possibleValues.Aggregate(
+                    allKeysList,
+                    (totalConnections, possibleValue) => {
+                        return totalConnections.Intersect(connections[possibleValue]).ToList();
                     }
-                }
-                grid[neighbor.x, neighbor.z] = possibleNeighborConnection;               
+                );
+               
+                grid[neighbor.x, neighbor.z] = allPossibleNeighborConnections;
             }
         }
-        foreach(MapLocation neighbor in neighbors)
+        foreach (MapLocation neighbor in neighbors)
         {
             if (IsNeighborValid(neighbor, width, depth) && grid[neighbor.x, neighbor.z].Count > possibleValues.Length)
             {
