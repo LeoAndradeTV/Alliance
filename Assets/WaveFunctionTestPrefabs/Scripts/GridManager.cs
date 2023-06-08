@@ -60,6 +60,7 @@ public class GridManager : MonoBehaviour
         SetUpWFC();
         List<int>[,] grid = CreateRandomGrid(width, depth);
         WaveFunctionCollapse(grid, width, depth);
+        RemoveSingleCubes(grid, width, depth);
         GenerateGridVisual(grid, width, depth);
     }
 
@@ -70,6 +71,39 @@ public class GridManager : MonoBehaviour
         foreach(GameObject cube in cubes)
         {
             DestroyImmediate(cube);
+        }
+    }
+
+    private void RemoveSingleCubes(List<int>[,] grid, int width, int depth)
+    {
+        for (int z = 0; z < depth; z+=moduleDepth)
+        {
+            for (int x = 0; x < width; x+=moduleWidth)
+            {
+                MapLocation currentPosition = new MapLocation(x, z);
+                List<MapLocation> neighbors = GetNeighbors(currentPosition);
+                List<int> neighborValues = new List<int>();
+                foreach (MapLocation neighbor in neighbors)
+                {
+                    if(IsNeighborValid(neighbor, width, depth))
+                    {
+                        neighborValues.Add(grid[neighbor.x, neighbor.z][0]);
+                    }
+                }
+                bool shouldChange = true;
+                int firstNeighbor = neighborValues[0];
+                for (int i = 1; i < neighborValues.Count; i++)
+                {
+                    if (neighborValues[i] != firstNeighbor)
+                    {
+                        shouldChange = false;
+                    }
+                }
+                if (shouldChange)
+                {
+                    grid[x, z] = new List<int> { firstNeighbor };
+                }
+            }
         }
     }
 

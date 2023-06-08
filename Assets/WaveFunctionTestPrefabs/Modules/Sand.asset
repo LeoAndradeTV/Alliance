@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 3446189162616401424, guid: ed33f2b9de5dbcb41a173a5fbc87a12b, type: 3}
   Id: 2
-  connections: 010000000200000003000000
+  connections: 01000000020000000300000004000000
