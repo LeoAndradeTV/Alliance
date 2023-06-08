@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    public static ItemManager Instance {  get; private set; }
+    public static ItemManager Instance { get; private set; }
 
     [SerializeField] private Transform carryTransform;
 
@@ -46,26 +46,27 @@ public class ItemManager : MonoBehaviour
 
     private void _playerInput_OnPlayerInteracted(object sender, System.EventArgs e)
     {
+        foundObject = FindInteractableObject();
+
         if (foundObject == null)
             return;
+
         if (foundObject.TryGetComponent(out IInteractable interactable))
         {
             interactable.Interact();
-        } 
+            if (!isHoldingItem)
+            {
+                foundObject = null;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isHoldingItem)
+        if (foundObject != null)
         {
-            foundObject = FindInteractableObject();
-        } else
-        {
-            if (foundObject != null)
-            {
-                foundObject.transform.position = carryTransform.position;
-            }
+            foundObject.transform.position = carryTransform.position;
         }
     }
 
