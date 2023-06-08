@@ -11,6 +11,9 @@ public class CustomTerrainEditor : Editor
     private bool showLoadHeight = false;
     private bool showPerlin = false;
     private bool showMultiplePerlin = false;
+    private bool showVoronoi = false;
+    private bool showSplats = false;
+    private bool showVegetation = false;
 
     // properties -------
     private SerializedProperty resetTerrain;
@@ -24,9 +27,22 @@ public class CustomTerrainEditor : Editor
     private SerializedProperty perlinOctaves;
     private SerializedProperty perlinPersistance;
     private SerializedProperty perlinHeightScale;
+    private SerializedProperty splatOffset;
+    private SerializedProperty splatOffsetFactor;
+    private SerializedProperty splatPerlinXScale;
+    private SerializedProperty splatPerlinYScale;
+    private SerializedProperty splatPerlinFactor;
 
     private GUITableState perlinParameterTable;
     private SerializedProperty perlinParameters;
+
+    private GUITableState splatHeightTable;
+    private SerializedProperty splatHeights;
+
+    private GUITableState vegetationTable;
+    private SerializedProperty vegetations;
+    private SerializedProperty maxTrees;
+    private SerializedProperty treeSpacing;
 
     private void OnEnable()
     {
@@ -43,6 +59,18 @@ public class CustomTerrainEditor : Editor
         perlinHeightScale = serializedObject.FindProperty("perlinHeightScale");
         perlinParameterTable = new GUITableState("perlinParametersTable");
         perlinParameters = serializedObject.FindProperty("perlinParameters");
+        splatHeightTable = new GUITableState("splatHeightTable");
+        splatHeights = serializedObject.FindProperty("splatHeights");
+        splatOffset = serializedObject.FindProperty("splatOffset");
+        splatOffsetFactor = serializedObject.FindProperty("splatOffsetFactor");
+        splatPerlinXScale = serializedObject.FindProperty("splatPerlinXScale");
+        splatPerlinYScale = serializedObject.FindProperty("splatPerlinYScale");
+        splatPerlinFactor = serializedObject.FindProperty("splatPerlinFactor");
+        vegetationTable = new GUITableState("vegetationTable");
+        vegetations = serializedObject.FindProperty("vegetations");
+        maxTrees = serializedObject.FindProperty("maxTrees");
+        treeSpacing = serializedObject.FindProperty("treeSpacing");
+
     }
 
     public override void OnInspectorGUI()
@@ -82,8 +110,8 @@ public class CustomTerrainEditor : Editor
         {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label("Load Heights Perlin Noise", EditorStyles.boldLabel);
-            EditorGUILayout.Slider(perlinXScale, 0, 1, new GUIContent("X Scale"));
-            EditorGUILayout.Slider(perlinYScale, 0, 1, new GUIContent("Y Scale"));
+            EditorGUILayout.Slider(perlinXScale, 0, 0.1f, new GUIContent("X Scale"));
+            EditorGUILayout.Slider(perlinYScale, 0, 0.1f, new GUIContent("Y Scale"));
             EditorGUILayout.IntSlider(perlinOffsetX, 0, 10000, new GUIContent("X Offset"));
             EditorGUILayout.IntSlider(perlinOffsetY, 0, 10000, new GUIContent("Y Offset"));
             EditorGUILayout.IntSlider(perlinOctaves, 1, 10, new GUIContent("Octaves"));
@@ -118,7 +146,68 @@ public class CustomTerrainEditor : Editor
             }
         }
 
+        showSplats = EditorGUILayout.Foldout(showSplats, "Splat Maps");
+        if (showSplats)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Splat Maps", EditorStyles.boldLabel);
+            splatHeightTable = GUITableLayout.DrawTable(splatHeightTable, splatHeights);
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(20);
+            if (GUILayout.Button("+"))
+            {
+                terrain.AddSplatHeight();
+            }
+            if (GUILayout.Button("-"))
+            {
+                terrain.RemoveSplatHeight();
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.PropertyField(splatOffset);
+            EditorGUILayout.PropertyField(splatOffsetFactor);
+            EditorGUILayout.PropertyField(splatPerlinXScale);
+            EditorGUILayout.PropertyField(splatPerlinYScale);
+            EditorGUILayout.PropertyField(splatPerlinFactor);
+            if (GUILayout.Button("Apply SplatMaps"))
+            {
+                terrain.SplatMaps();
+            }
+        }
 
+        showVoronoi = EditorGUILayout.Foldout(showVoronoi, "Voronoi");
+        if (showVoronoi)
+        {
+            if (GUILayout.Button("Voronoi"))
+            {
+                terrain.Voronoi();
+            }
+        }
+
+        showVegetation = EditorGUILayout.Foldout(showVegetation, "Vegetation");
+        if (showVegetation)
+        {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Vegetation", EditorStyles.boldLabel);
+            EditorGUILayout.IntSlider(maxTrees, 1, 10000, "Maximum Trees");
+            EditorGUILayout.IntSlider(treeSpacing, 2, 20, "Tree Spacing");
+            vegetationTable = GUITableLayout.DrawTable(vegetationTable, vegetations);
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(20);
+            if (GUILayout.Button("+"))
+            {
+                terrain.AddNewVegetation();
+            }
+            if (GUILayout.Button("-"))
+            {
+                terrain.RemoveVegetation();
+            }
+            EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("Apply Vegetation"))
+            {
+                terrain.ApplyVegetation();
+            }
+
+        }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         if (GUILayout.Button("Reset Terrain"))
